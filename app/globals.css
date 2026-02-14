@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 162 78% 45%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 340 82% 52%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 162 78% 45%;
+    --chart-1: 162 78% 45%;
+    --chart-2: 340 82% 52%;
+    --chart-3: 45 96% 54%;
+    --chart-4: 210 100% 56%;
+    --chart-5: 280 80% 55%;
+    --radius: 0.75rem;
+    --glow: 162 78% 45%;
+    --warning: 45 96% 54%;
+    --warning-foreground: 240 10% 3.9%;
+  }
+
+  .dark {
+    --background: 240 20% 4%;
+    --foreground: 220 20% 92%;
+    --card: 240 18% 8%;
+    --card-foreground: 220 20% 92%;
+    --popover: 240 18% 8%;
+    --popover-foreground: 220 20% 92%;
+    --primary: 162 78% 55%;
+    --primary-foreground: 240 20% 4%;
+    --secondary: 240 15% 14%;
+    --secondary-foreground: 220 20% 85%;
+    --muted: 240 12% 12%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 340 82% 62%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 12% 16%;
+    --input: 240 12% 16%;
+    --ring: 162 78% 55%;
+    --chart-1: 162 78% 55%;
+    --chart-2: 340 82% 62%;
+    --chart-3: 45 96% 64%;
+    --chart-4: 210 100% 66%;
+    --chart-5: 280 80% 65%;
+    --glow: 162 78% 55%;
+    --warning: 45 96% 64%;
+    --warning-foreground: 240 20% 4%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
