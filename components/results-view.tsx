@@ -11,7 +11,7 @@ import {
   Zap,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
-import { savePurchaseHistory, saveGuestPurchaseHistory } from "@/lib/purchase-history"
+import { savePurchaseHistory, saveGuestPurchaseHistory, isClientBlockedError } from "@/lib/purchase-history"
 import { logger } from "@/lib/logger"
 
 interface UserProfile {
@@ -126,6 +126,7 @@ function ComparisonCard({
 
 export function ResultsView({ price, label, category, profile, onNewPrice, preventSave }: ResultsViewProps) {
   const [regretAnswer, setRegretAnswer] = useState<string | null>(null)
+  const [syncWarning, setSyncWarning] = useState<string | null>(null)
   const { user, isGuest } = useAuth()
   const savedKey = useRef<string>("")
 
@@ -175,15 +176,20 @@ export function ResultsView({ price, label, category, profile, onNewPrice, preve
         if (user) {
           logger.debug("results", "Saving purchase to Firestore", user.uid)
           await savePurchaseHistory(user.uid, purchase)
+          setSyncWarning(null)
           logger.info("results", "Purchase saved to Firestore")
         } else if (isGuest) {
           logger.debug("results", "Saving purchase to guest localStorage")
           saveGuestPurchaseHistory(purchase)
+          setSyncWarning(null)
           logger.info("results", "Purchase saved to localStorage")
         } else {
           logger.warn("results", "No user or guest, cannot save purchase history")
         }
       } catch (error) {
+        if (user && isClientBlockedError(error)) {
+          setSyncWarning("Cloud sync is blocked by your browser (ad/privacy extension). Your decision may not be saved to Firestore.")
+        }
         logger.error("results", "Failed to save purchase history", error)
         if (error instanceof Error) {
           logger.error("results", "Purchase save error message", error.message)
@@ -379,6 +385,12 @@ export function ResultsView({ price, label, category, profile, onNewPrice, preve
           </div>
         )}
       </section>
+
+      {syncWarning && (
+        <div className="rounded-xl border border-warning/40 bg-warning/10 p-4 text-sm text-warning-foreground">
+          {syncWarning}
+        </div>
+      )}
 
       {/* Actions */}
       <div className="flex flex-col items-center gap-3">

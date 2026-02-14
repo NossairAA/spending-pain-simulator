@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
-import { getPurchaseHistory, getGuestPurchaseHistory, PurchaseHistory, updatePurchaseDecision, deletePurchase, deleteGuestPurchase } from "@/lib/purchase-history"
+import { getPurchaseHistory, getGuestPurchaseHistory, PurchaseHistory, updatePurchaseDecision, deletePurchase, deleteGuestPurchase, isClientBlockedError } from "@/lib/purchase-history"
 import { X, TrendingDown, Clock, Calendar, ShoppingBag, Ban, Trash2 } from "lucide-react"
 
 interface InsightsPageProps {
@@ -16,6 +16,7 @@ export function InsightsPage({ onClose, onProductClick }: InsightsPageProps) {
     const [history, setHistory] = useState<PurchaseHistory[]>([])
     const [loading, setLoading] = useState(true)
     const [refreshTrigger, setRefreshTrigger] = useState(0)
+    const [syncWarning, setSyncWarning] = useState<string | null>(null)
 
     useEffect(() => {
         async function loadHistory() {
@@ -23,11 +24,16 @@ export function InsightsPage({ onClose, onProductClick }: InsightsPageProps) {
                 if (user) {
                     const data = await getPurchaseHistory(user.uid)
                     setHistory(data)
+                    setSyncWarning(null)
                 } else if (isGuest) {
                     const data = getGuestPurchaseHistory()
                     setHistory(data)
+                    setSyncWarning(null)
                 }
             } catch (error) {
+                if (user && isClientBlockedError(error)) {
+                    setSyncWarning("Cloud sync is blocked by your browser (ad/privacy extension). Firestore history may not load.")
+                }
                 console.error("Failed to load history:", error)
             } finally {
                 setLoading(false)
@@ -115,6 +121,12 @@ export function InsightsPage({ onClose, onProductClick }: InsightsPageProps) {
                     </button>
                 </div>
 
+                {syncWarning && (
+                    <div className="mb-6 rounded-xl border border-warning/40 bg-warning/10 p-4 text-sm text-warning-foreground">
+                        {syncWarning}
+                    </div>
+                )}
+
                 {totalChecks === 0 ? (
                     <div className="rounded-2xl border border-border/50 bg-card/50 p-12 text-center">
                         <ShoppingBag className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50" />
@@ -199,6 +211,7 @@ export function InsightsPage({ onClose, onProductClick }: InsightsPageProps) {
                                         purchase={purchase}
                                         onDecisionUpdate={() => setRefreshTrigger(prev => prev + 1)}
                                         onProductClick={() => onProductClick(purchase)}
+                                        onSyncBlocked={() => setSyncWarning("Cloud sync is blocked by your browser (ad/privacy extension). Firestore updates may fail until you allow googleapis.")}
                                     />
                                 ))}
                             </div>
@@ -258,10 +271,11 @@ const CATEGORY_ICONS: Record<string, string> = {
     other: "📦",
 }
 
-function PurchaseCard({ purchase, onDecisionUpdate, onProductClick }: {
+function PurchaseCard({ purchase, onDecisionUpdate, onProductClick, onSyncBlocked }: {
     purchase: PurchaseHistory
     onDecisionUpdate: () => void
     onProductClick: () => void
+    onSyncBlocked: () => void
 }) {
     const { user, isGuest } = useAuth()
     const [localDecision, setLocalDecision] = useState(purchase.decision)
@@ -303,6 +317,9 @@ function PurchaseCard({ purchase, onDecisionUpdate, onProductClick }: {
             // Trigger refresh of insights
             onDecisionUpdate()
         } catch (error) {
+            if (user && isClientBlockedError(error)) {
+                onSyncBlocked()
+            }
             console.error("Failed to save decision:", error)
         } finally {
             setSaving(false)
@@ -321,6 +338,9 @@ function PurchaseCard({ purchase, onDecisionUpdate, onProductClick }: {
             }
             onDecisionUpdate()
         } catch (error) {
+            if (user && isClientBlockedError(error)) {
+                onSyncBlocked()
+            }
             console.error("Failed to delete purchase:", error)
         } finally {
             setSaving(false)

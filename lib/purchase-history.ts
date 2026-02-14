@@ -1,6 +1,22 @@
 import { doc, setDoc, collection, addDoc, query, orderBy, limit, getDocs, Timestamp } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
+export function isClientBlockedError(error: unknown): boolean {
+    if (!error) return false
+
+    const text = typeof error === "string"
+        ? error
+        : error instanceof Error
+            ? `${error.name} ${error.message}`
+            : JSON.stringify(error)
+
+    return (
+        text.includes("ERR_BLOCKED_BY_CLIENT") ||
+        text.includes("net::ERR_BLOCKED_BY_CLIENT") ||
+        text.includes("blocked by client")
+    )
+}
+
 export interface PurchaseHistory {
     id?: string
     price: number
