@@ -1,6 +1,7 @@
 # MindSpend Web App
 
 <img src="./public/mindspend-logo.png" alt="MindSpend Logo" width="64" />
+
 MindSpend is a web app that helps users make intentional purchase decisions by reframing spending as tradeoffs in time, opportunity cost, and long-term goals.
 
 
