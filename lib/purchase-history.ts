@@ -75,11 +75,27 @@ export async function getPurchaseHistory(
         const q = query(purchasesRef, orderBy("timestamp", "desc"), limit(limitCount))
         const querySnapshot = await getDocs(q)
 
-        return querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-            timestamp: doc.data().timestamp.toDate(),
-        })) as PurchaseHistory[]
+        return querySnapshot.docs.map((doc) => {
+            const data = doc.data()
+            const rawTimestamp = data.timestamp
+
+            let timestamp: Date
+            if (rawTimestamp && typeof rawTimestamp.toDate === "function") {
+                timestamp = rawTimestamp.toDate()
+            } else if (typeof rawTimestamp === "number" || typeof rawTimestamp === "string") {
+                timestamp = new Date(rawTimestamp)
+            } else if (rawTimestamp instanceof Date) {
+                timestamp = rawTimestamp
+            } else {
+                timestamp = new Date(0)
+            }
+
+            return {
+                id: doc.id,
+                ...data,
+                timestamp,
+            }
+        }) as PurchaseHistory[]
     } catch (error) {
         console.error("Error getting purchase history:", error)
         throw error
