@@ -1,8 +1,9 @@
 # MindSpend Web App
 
+![MindSpend Logo](public/mindspend-logo.png)
+
 MindSpend is a web app that helps users make intentional purchase decisions by reframing spending as tradeoffs in time, opportunity cost, and long-term goals.
 
-![MindSpend Logo](public/mindspend-logo.png)
 
 ## What this app does
 
@@ -48,8 +49,3 @@ npm run dev
 - `npm run build` - Build production bundle.
 - `npm run start` - Run production server.
 - `npm run lint` - Run ESLint checks.
-
-## Notes
-
-- This repository contains the **web app** for MindSpend.
-- Mobile app assets may exist in a separate repository/folder.
