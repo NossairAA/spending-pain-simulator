@@ -1,6 +1,7 @@
 "use client"
 
 import { ArrowRight, Shield, Zap, Eye } from "lucide-react"
+import Image from "next/image"
 
 interface WelcomeScreenProps {
     onGetStarted: () => void
@@ -11,8 +12,15 @@ export function WelcomeScreen({ onGetStarted }: WelcomeScreenProps) {
         <div className="flex flex-col items-center gap-10 px-4 py-16">
             {/* Hero */}
             <div className="flex flex-col items-center gap-4 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-                    <span className="text-4xl">💭</span>
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 p-2">
+                    <Image
+                        src="/mindspend-logo.png"
+                        alt="MindSpend logo"
+                        width={48}
+                        height={48}
+                        className="h-12 w-12 object-contain"
+                        priority
+                    />
                 </div>
 
                 <div className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5">

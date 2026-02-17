@@ -2,6 +2,7 @@
 
 import { Settings, Moon, Sun, LogOut, User as UserIcon, ChevronDown, UserCircle, BarChart3, Target } from "lucide-react"
 import { useTheme } from "next-themes"
+import Image from "next/image"
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 
@@ -31,9 +32,14 @@ export function Header({ onSettingsClick, onGoalsClick, onProfileClick, onInsigh
                     onClick={onLogoClick}
                     className="flex items-center gap-2 transition-opacity hover:opacity-80"
                 >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                        <span className="text-xl">💭</span>
-                    </div>
+                    <Image
+                        src="/mindspend-logo.png"
+                        alt="MindSpend logo"
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 rounded-lg object-contain"
+                        priority
+                    />
                     <span className="font-display text-xl font-bold text-foreground">
                         MindSpend
                     </span>
